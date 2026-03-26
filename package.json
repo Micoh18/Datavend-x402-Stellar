@@ -1,0 +1,22 @@
+{
+  "name": "datavend",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Pay-per-query sensor data marketplace with x402 on Stellar",
+  "workspaces": [
+    "packages/*",
+    "apps/*"
+  ],
+  "scripts": {
+    "dev:sensors": "docker-compose up",
+    "dev:web": "cd apps/web && npm run dev",
+    "build:web": "cd apps/web && npm run build",
+    "setup:wallets": "node scripts/setup-wallets.js",
+    "test:e2e": "cd packages/buyer-sdk && node cli.js --sensor http://localhost:3001"
+  },
+  "dependencies": {
+    "@stellar/stellar-sdk": "^14.6.1",
+    "dotenv": "^17.3.1"
+  }
+}

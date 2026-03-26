@@ -1,0 +1,18 @@
+{
+  "name": "@datavend/buyer-sdk",
+  "version": "1.0.0",
+  "description": "SDK para automatizar el flujo x402 de compra de datos de sensores sobre Stellar",
+  "type": "module",
+  "main": "index.js",
+  "bin": {
+    "datavend-buy": "./cli.js"
+  },
+  "scripts": {
+    "test": "node cli.js --sensor http://localhost:3001"
+  },
+  "dependencies": {
+    "@stellar/stellar-sdk": "^13.1.0"
+  },
+  "keywords": ["stellar", "x402", "iot", "sensor", "micropayments"],
+  "license": "MIT"
+}

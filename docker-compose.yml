@@ -1,0 +1,37 @@
+version: '3.8'
+services:
+  sensor-001:
+    build: ./packages/sensor-node
+    ports:
+      - "3001:3001"
+    environment:
+      - SENSOR_ID=sensor_001
+      - SENSOR_SECRET_KEY=${SENSOR_001_SECRET}
+      - SENSOR_PRICE_USDC=0.005
+      - SENSOR_DESCRIPTION=Temperatura viñedo Valle de Uco
+      - PORT=3001
+      - HORIZON_URL=https://horizon-testnet.stellar.org
+
+  sensor-002:
+    build: ./packages/sensor-node
+    ports:
+      - "3002:3002"
+    environment:
+      - SENSOR_ID=sensor_002
+      - SENSOR_SECRET_KEY=${SENSOR_002_SECRET}
+      - SENSOR_PRICE_USDC=0.005
+      - SENSOR_DESCRIPTION=Humedad suelo Malbec Block A
+      - PORT=3002
+      - HORIZON_URL=https://horizon-testnet.stellar.org
+
+  sensor-003:
+    build: ./packages/sensor-node
+    ports:
+      - "3003:3003"
+    environment:
+      - SENSOR_ID=sensor_003
+      - SENSOR_SECRET_KEY=${SENSOR_003_SECRET}
+      - SENSOR_PRICE_USDC=0.010
+      - SENSOR_DESCRIPTION=pH tanque fermentacion bodega
+      - PORT=3003
+      - HORIZON_URL=https://horizon-testnet.stellar.org
