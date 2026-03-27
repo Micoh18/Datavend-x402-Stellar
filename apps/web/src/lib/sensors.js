@@ -4,7 +4,7 @@ const API_BASE = import.meta.env.VITE_SENSOR_API_URL || '';
 export const SENSORS = [
   {
     id: 'sensor_001',
-    name: 'Temperature',
+    name: 'Temperatura',
     icon: 'temperature',
     description: 'Temperatura vi\u00f1edo Valle de Uco, Mendoza',
     location: 'Valle de Uco, Mendoza',
@@ -15,10 +15,10 @@ export const SENSORS = [
   },
   {
     id: 'sensor_002',
-    name: 'Humidity',
+    name: 'Humedad',
     icon: 'humidity',
     description: 'Humedad relativa parcela Malbec Bloque A',
-    location: 'Malbec Block A, Luj\u00e1n de Cuyo',
+    location: 'Bloque A Malbec, Luj\u00e1n de Cuyo',
     price: '0.005',
     status: 'active',
     endpoint: `${API_BASE}/api/data?sensor=sensor_002`,
@@ -26,7 +26,7 @@ export const SENSORS = [
   },
   {
     id: 'sensor_003',
-    name: 'pH Tank',
+    name: 'pH Tanque',
     icon: 'ph',
     description: 'pH del tanque de fermentaci\u00f3n T-07, Bodega Andina',
     location: 'Bodega T-07, San Rafael',
@@ -55,7 +55,7 @@ export function generateMockReading(sensorId) {
       type: 'humidity',
       value: +(55 + Math.random() * 25).toFixed(1),
       unit: '%RH',
-      location: 'Malbec Block A, Luj\u00e1n de Cuyo',
+      location: 'Bloque A Malbec, Luj\u00e1n de Cuyo',
       timestamp: now,
       metadata: { soil_type: 'alluvial', irrigation: 'drip' },
     },
