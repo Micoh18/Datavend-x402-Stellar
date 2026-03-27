@@ -1,7 +1,7 @@
 {
   "buildCommand": "npm run build --workspace=apps/web",
   "outputDirectory": "apps/web/dist",
-  "installCommand": "npm install --include=dev",
+  "installCommand": "rm -f package-lock.json && npm install --include=dev --legacy-peer-deps",
   "framework": null,
   "headers": [
     {

@@ -3,17 +3,27 @@ import { txExplorerUrl, truncateAddress } from '../lib/stellar';
 import { DataVendClient } from '../lib/datavend-client';
 import { useWallet } from '../lib/wallet-context';
 
+function parseUrl(raw) {
+  try {
+    const u = new URL(raw, window.location.origin);
+    return { pathname: u.pathname + u.search, host: u.host };
+  } catch {
+    return { pathname: raw, host: window.location.host };
+  }
+}
+
 function ProtocolLine({ event }) {
   const { type, detail } = event;
 
   if (type === 'request') {
+    const url = parseUrl(detail.url);
     return (
       <div className="space-y-0.5">
         <p className="text-vid font-bold">
-          → {detail.method} {new URL(detail.url).pathname} HTTP/1.1
+          → {detail.method} {url.pathname} HTTP/1.1
         </p>
         <p className="text-txt-muted text-[11px]">
-          Host: {new URL(detail.url).host}
+          Host: {url.host}
         </p>
         {detail.headers?.['X-Payment'] && (
           <>
