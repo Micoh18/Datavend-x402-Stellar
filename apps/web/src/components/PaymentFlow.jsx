@@ -285,7 +285,7 @@ export default function PaymentFlow({ sensor }) {
               <span className="h-2.5 w-2.5 rounded-full bg-vid/60" />
             </div>
             <span className="font-mono text-[11px] text-txt-muted">
-              x402 protocol — {new URL(sensor.endpoint).host}
+              x402 protocol — {parseUrl(sensor.endpoint).host}
             </span>
           </div>
           {status === 'received' && (
