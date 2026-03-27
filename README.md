@@ -219,10 +219,10 @@ Para probar:
 
 ## Equipo
 
-Construido durante el **VendimiaTech Hackathon 2026** en Mendoza, Argentina.
+Construido durante el **VendimiaTech Hackathon 2026**.
 
 ---
 
 <p align="center">
-  <sub>Hecho con Stellar, Soroban y mucho cafe mendocino.</sub>
+  <sub>Hecho con Stellar, Soroban y mucho cafe.</sub>
 </p>
