@@ -2,6 +2,7 @@ import { useParams, Link } from 'react-router-dom';
 import { SENSORS } from '../lib/sensors';
 import { truncateAddress, accountExplorerUrl } from '../lib/stellar';
 import PaymentFlow from '../components/PaymentFlow';
+import SensorIcon from '../components/SensorIcon';
 
 export default function SensorDetail() {
   const { id } = useParams();
@@ -9,37 +10,41 @@ export default function SensorDetail() {
 
   if (!sensor) {
     return (
-      <div className="flex flex-col items-center py-20 text-gray-400">
-        <p className="mb-4 text-lg">Sensor not found</p>
-        <Link to="/sensors" className="text-violet-400 underline">
-          &#x2190; Back to sensors
+      <div className="page-enter flex flex-col items-center py-20 text-txt-soft">
+        <p className="font-heading text-5xl font-black text-wine">?</p>
+        <p className="mt-4 text-lg">Sensor no encontrado</p>
+        <p className="mt-1 text-sm text-txt-muted">
+          Puede que haya sido desregistrado del contrato, o que la URL est&eacute; mal.
+        </p>
+        <Link to="/sensors" className="mt-6 text-wine-light underline">
+          &#x2190; Volver a sensores
         </Link>
       </div>
     );
   }
 
   return (
-    <div className="mx-auto max-w-2xl px-4 py-10">
+    <div className="page-enter mx-auto max-w-2xl px-4 py-10">
       <Link
         to="/sensors"
-        className="mb-6 inline-block text-sm text-gray-500 hover:text-gray-300 transition-colors"
+        className="mb-6 inline-block text-sm text-txt-muted transition-colors hover:text-txt"
       >
-        &#x2190; All sensors
+        &#x2190; Todos los sensores
       </Link>
 
-      <div className="rounded-2xl border border-gray-800 bg-gray-900/60 p-6">
+      <div className="rounded-2xl border border-line bg-card p-6">
         {/* Header */}
         <div className="mb-6 flex items-start justify-between">
           <div>
-            <span className="text-4xl">{sensor.icon}</span>
-            <h1 className="mt-2 text-2xl font-bold text-white">{sensor.name}</h1>
-            <p className="text-gray-400">{sensor.description}</p>
+            <SensorIcon type={sensor.icon} className="h-10 w-10" />
+            <h1 className="mt-2 font-heading text-2xl font-bold text-txt-strong">{sensor.name}</h1>
+            <p className="text-txt-soft">{sensor.description}</p>
           </div>
           <span
             className={`rounded-full px-3 py-1 text-xs font-semibold uppercase tracking-wider ${
               sensor.status === 'active'
-                ? 'bg-emerald-500/15 text-emerald-400'
-                : 'bg-gray-700/50 text-gray-500'
+                ? 'bg-vid/15 text-vid-light'
+                : 'bg-elevated/50 text-txt-muted'
             }`}
           >
             {sensor.status}
@@ -48,8 +53,8 @@ export default function SensorDetail() {
 
         {/* Info grid */}
         <div className="mb-6 grid grid-cols-2 gap-4">
-          <InfoItem label="Price per query" value={`${sensor.price} USDC`} mono />
-          <InfoItem label="Location" value={sensor.location} />
+          <InfoItem label="Precio por consulta" value={`${sensor.price} USDC`} mono />
+          <InfoItem label="Ubicaci&oacute;n" value={sensor.location} />
           <InfoItem label="Sensor ID" value={sensor.id} mono />
           <InfoItem
             label="Owner"
@@ -60,9 +65,9 @@ export default function SensorDetail() {
         </div>
 
         {/* Endpoint */}
-        <div className="mb-6 rounded-lg bg-gray-950 p-3">
-          <p className="mb-1 text-xs text-gray-500">Endpoint</p>
-          <code className="text-sm text-gray-300">{sensor.endpoint}/data</code>
+        <div className="mb-6 rounded-lg bg-base p-3">
+          <p className="mb-1 text-xs text-txt-muted">Endpoint</p>
+          <code className="break-all text-sm text-txt-soft">{sensor.endpoint}</code>
         </div>
 
         {/* Payment flow */}
@@ -75,20 +80,20 @@ export default function SensorDetail() {
 function InfoItem({ label, value, mono, link }) {
   return (
     <div>
-      <p className="text-xs text-gray-500">{label}</p>
+      <p className="text-xs text-txt-muted">{label}</p>
       {link ? (
         <a
           href={link}
           target="_blank"
           rel="noopener noreferrer"
-          className={`text-sm text-violet-400 underline decoration-violet-400/30 hover:decoration-violet-400 ${
+          className={`text-sm text-wine-light underline decoration-wine/30 hover:decoration-wine ${
             mono ? 'font-mono' : ''
           }`}
         >
           {value}
         </a>
       ) : (
-        <p className={`text-sm text-white ${mono ? 'font-mono' : ''}`}>{value}</p>
+        <p className={`text-sm text-txt-strong ${mono ? 'font-mono' : ''}`}>{value}</p>
       )}
     </div>
   );

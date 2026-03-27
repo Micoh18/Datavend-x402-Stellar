@@ -1,1 +1,94 @@
 @import "tailwindcss";
+
+@theme {
+  /* Brand colors — invariant across themes */
+  --color-wine: #722F37;
+  --color-wine-light: #8B3A42;
+  --color-wine-dark: #5A252C;
+  --color-tierra: #8B7355;
+  --color-tierra-light: #A08B6D;
+  --color-vid: #4A7C59;
+  --color-vid-light: #5D9A6E;
+
+  /* Semantic surface tokens — swap with .dark */
+  --color-base: var(--s-base);
+  --color-card: var(--s-card);
+  --color-elevated: var(--s-elevated);
+  --color-line: var(--s-line);
+  --color-txt: var(--s-txt);
+  --color-txt-strong: var(--s-txt-strong);
+  --color-txt-soft: var(--s-txt-soft);
+  --color-txt-muted: var(--s-txt-muted);
+
+  --font-heading: 'Playfair Display', Georgia, serif;
+}
+
+/* ── Light theme (default) ── */
+:root {
+  --s-base: #FAF7F2;
+  --s-card: #FFFFFF;
+  --s-elevated: #F0EBE3;
+  --s-line: #DDD5C8;
+  --s-txt: #3A3530;
+  --s-txt-strong: #1A1510;
+  --s-txt-soft: #6B5E4D;
+  --s-txt-muted: #A08B6D;
+}
+
+/* ── Dark theme ── */
+.dark {
+  --s-base: #1A1510;
+  --s-card: #2A2520;
+  --s-elevated: #3A3530;
+  --s-line: #3A3530;
+  --s-txt: #D4C5A9;
+  --s-txt-strong: #FFFFFF;
+  --s-txt-soft: #8B7355;
+  --s-txt-muted: #6B5E4D;
+}
+
+/* ── Page transition ── */
+.page-enter {
+  animation: fadeSlideIn 0.2s ease-out;
+}
+
+@keyframes fadeSlideIn {
+  from { opacity: 0; transform: translateY(6px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ── Animated checkmark ── */
+.checkmark-circle {
+  stroke-dasharray: 120;
+  stroke-dashoffset: 120;
+  animation: drawCircle 0.4s ease-out forwards;
+}
+.checkmark-path {
+  stroke-dasharray: 30;
+  stroke-dashoffset: 30;
+  animation: drawCheck 0.3s ease-out 0.35s forwards;
+}
+
+@keyframes drawCircle {
+  to { stroke-dashoffset: 0; }
+}
+@keyframes drawCheck {
+  to { stroke-dashoffset: 0; }
+}
+
+/* ── Skeleton shimmer ── */
+.skeleton {
+  background: linear-gradient(
+    90deg,
+    var(--s-card) 25%,
+    var(--s-elevated) 50%,
+    var(--s-card) 75%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 1.5s ease-in-out infinite;
+}
+
+@keyframes shimmer {
+  0%   { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}

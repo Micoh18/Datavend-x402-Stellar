@@ -1,36 +1,38 @@
-// Sensor registry — uses VITE_ env vars for endpoints, falls back to localhost
+// Same-origin in production (Vercel), configurable for local dev
+const API_BASE = import.meta.env.VITE_SENSOR_API_URL || '';
+
 export const SENSORS = [
   {
     id: 'sensor_001',
     name: 'Temperature',
-    icon: '\u{1f321}\ufe0f',
+    icon: 'temperature',
     description: 'Temperatura vi\u00f1edo Valle de Uco, Mendoza',
     location: 'Valle de Uco, Mendoza',
     price: '0.005',
     status: 'active',
-    endpoint: import.meta.env.VITE_SENSOR_001_URL || 'http://localhost:3001',
+    endpoint: `${API_BASE}/api/data?sensor=sensor_001`,
     owner: import.meta.env.VITE_SENSOR_001_PUBLIC || 'GCO3K47OKKLFE4TDUYLH5ROR67CSXBCMLS5224HX56EFXPZGKNCKBCXQ',
   },
   {
     id: 'sensor_002',
     name: 'Humidity',
-    icon: '\u{1f4a7}',
+    icon: 'humidity',
     description: 'Humedad relativa parcela Malbec Bloque A',
     location: 'Malbec Block A, Luj\u00e1n de Cuyo',
     price: '0.005',
     status: 'active',
-    endpoint: import.meta.env.VITE_SENSOR_002_URL || 'http://localhost:3002',
+    endpoint: `${API_BASE}/api/data?sensor=sensor_002`,
     owner: import.meta.env.VITE_SENSOR_002_PUBLIC || 'GACVKSIB5EVCBEQTAZPZ6Q4UYRQFKWFDEIZ6AEQIGMXCAD24KAXEGKM7',
   },
   {
     id: 'sensor_003',
     name: 'pH Tank',
-    icon: '\u{1f9ea}',
+    icon: 'ph',
     description: 'pH del tanque de fermentaci\u00f3n T-07, Bodega Andina',
     location: 'Bodega T-07, San Rafael',
     price: '0.010',
     status: 'active',
-    endpoint: import.meta.env.VITE_SENSOR_003_URL || 'http://localhost:3003',
+    endpoint: `${API_BASE}/api/data?sensor=sensor_003`,
     owner: import.meta.env.VITE_SENSOR_003_PUBLIC || 'GCBWXXQA2TRBYUQAHBTEX5SXPCZ2SAGCNHKGDEJY3G6HQZS3UVK2WRPQ',
   },
 ];

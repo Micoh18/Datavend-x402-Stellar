@@ -1,10 +1,8 @@
 /**
  * Browser-compatible DataVendClient
- * Adapted from packages/buyer-sdk for frontend use.
- * Supports: demo mode (secret key) and Freighter mode (external signer).
+ * Emits real protocol data at each step for transparent x402 visualization.
  */
 import {
-  Keypair,
   Networks,
   TransactionBuilder,
   Asset,
@@ -13,49 +11,52 @@ import {
   Horizon,
 } from '@stellar/stellar-sdk';
 
-const DEFAULT_USDC_ISSUER = 'GBBD47IF6LWK7P7MDEVSCWR7DPUWV3NY3DTQEVFL4NAT4AQH3ZLLFLA5';
+const DEFAULT_USDC_ISSUER = 'GDRYVCUS7E4K5QDZYWUGRD35SEQJ5MYOQIBUS67GO6DLDZ5WIXDLNGKR';
+
+/**
+ * @callback OnProtocolEvent
+ * @param {string} type - Event type: 'request' | 'response' | 'tx' | 'complete' | 'info'
+ * @param {object} detail - Real protocol data for this event
+ */
 
 export class DataVendClient {
   /**
    * @param {object} opts
-   * @param {string} [opts.secretKey]  — demo mode: sign with this key
-   * @param {string} [opts.publicKey]  — required if using Freighter (no secret)
+   * @param {string} opts.publicKey
    * @param {string} [opts.horizonUrl]
-   * @param {function} [opts.onStep]   — callback(stepIndex, label) for UI progress
+   * @param {OnProtocolEvent} [opts.onProtocol] - callback(type, detail) with real data
    */
   constructor(opts = {}) {
+    if (!opts.publicKey) {
+      throw new Error('DataVendClient requires publicKey (connect Freighter first)');
+    }
     this.horizonUrl = opts.horizonUrl || import.meta.env.VITE_HORIZON_URL || 'https://horizon-testnet.stellar.org';
     this.server = new Horizon.Server(this.horizonUrl);
-    this.onStep = opts.onStep || (() => {});
-
-    if (opts.secretKey) {
-      this.keypair = Keypair.fromSecret(opts.secretKey);
-      this.publicKey = this.keypair.publicKey();
-      this.mode = 'demo';
-    } else if (opts.publicKey) {
-      this.keypair = null;
-      this.publicKey = opts.publicKey;
-      this.mode = 'freighter';
-    } else {
-      throw new Error('DataVendClient requires either secretKey or publicKey');
-    }
+    this.onProtocol = opts.onProtocol || (() => {});
+    this.publicKey = opts.publicKey;
   }
 
   /**
-   * Full x402 flow with step-by-step progress callbacks.
-   * @param {string} sensorUrl — base URL of sensor (e.g. http://localhost:3001)
+   * Full x402 flow emitting real protocol events.
+   * @param {string} sensorUrl
    * @returns {Promise<{data: object, tx_hash: string, paid_usdc: string}>}
    */
   async queryWithPayment(sensorUrl) {
-    const dataUrl = `${sensorUrl}/data`;
+    // sensorUrl is the full endpoint URL (e.g. "https://host/api/data?sensor=X")
+    const dataUrl = sensorUrl;
 
-    // Step 0: Initial request
-    this.onStep(0, 'Sending GET /data request...');
+    // 1. Initial GET — no payment header
+    this.onProtocol('request', {
+      method: 'GET',
+      url: dataUrl,
+      headers: {},
+    });
+
     const firstResponse = await fetch(dataUrl);
 
     if (firstResponse.ok) {
       const data = await firstResponse.json();
-      this.onStep(5, '\u2713 Data received (free endpoint)!');
+      this.onProtocol('response', { status: 200, statusText: 'OK', body: data });
       return { data, tx_hash: null, paid_usdc: '0' };
     }
 
@@ -63,9 +64,13 @@ export class DataVendClient {
       throw new Error(`Unexpected status: ${firstResponse.status} ${firstResponse.statusText}`);
     }
 
-    // Step 1: Parse 402
-    this.onStep(1, 'Received HTTP 402 \u2014 Payment Required');
+    // 2. Received 402 — show the real payment instructions
     const paymentInfo = await firstResponse.json();
+    this.onProtocol('response', {
+      status: 402,
+      statusText: 'Payment Required',
+      body: paymentInfo,
+    });
 
     if (!paymentInfo.accepts || paymentInfo.accepts.length === 0) {
       throw new Error('402 response missing payment instructions');
@@ -74,8 +79,16 @@ export class DataVendClient {
     const paymentOption = paymentInfo.accepts[0];
     const { maxAmountRequired, payTo, memo, assetIssuer } = paymentOption;
 
-    // Step 2: Build tx
-    this.onStep(2, 'Building Stellar transaction...');
+    // 3. Build Stellar transaction
+    this.onProtocol('tx', {
+      phase: 'building',
+      destination: payTo,
+      amount: maxAmountRequired,
+      asset: 'USDC',
+      memo,
+      network: 'stellar-testnet',
+    });
+
     const usdcAsset = new Asset('USDC', assetIssuer || DEFAULT_USDC_ISSUER);
     const account = await this.server.loadAccount(this.publicKey);
 
@@ -95,36 +108,46 @@ export class DataVendClient {
 
     const tx = txBuilder.build();
 
-    // Step 3: Sign & submit
-    this.onStep(3, `Submitting payment (${maxAmountRequired} USDC)...`);
-    let txHash;
+    // 4. Sign via Freighter
+    this.onProtocol('tx', { phase: 'signing', signer: 'Freighter' });
 
-    if (this.mode === 'demo') {
-      tx.sign(this.keypair);
-      const result = await this.server.submitTransaction(tx);
-      txHash = result.hash;
-    } else {
-      // Freighter mode — ask extension to sign
-      const { signTransaction } = await import('@stellar/freighter-api');
-      const xdr = tx.toXDR();
-      const { signedTxXdr } = await signTransaction(xdr, {
-        networkPassphrase: Networks.TESTNET,
-      });
-      const signedTx = TransactionBuilder.fromXDR(signedTxXdr, Networks.TESTNET);
-      const result = await this.server.submitTransaction(signedTx);
-      txHash = result.hash;
+    const { signTransaction } = await import('@stellar/freighter-api');
+    const xdr = tx.toXDR();
+    const { signedTxXdr, error: signError } = await signTransaction(xdr, {
+      networkPassphrase: Networks.TESTNET,
+    });
+
+    if (signError || !signedTxXdr) {
+      throw new Error(signError || 'Firma rechazada en Freighter');
     }
 
-    // Step 4: Re-request with proof
-    this.onStep(4, 'Re-requesting with X-Payment proof...');
-    const paymentProof = btoa(
-      JSON.stringify({
-        x402Version: '1',
-        scheme: 'exact',
-        network: 'stellar-testnet',
-        tx_hash: txHash,
-      })
-    );
+    // 5. Submit to Stellar
+    this.onProtocol('tx', { phase: 'submitting' });
+    const signedTx = TransactionBuilder.fromXDR(signedTxXdr, Networks.TESTNET);
+    const result = await this.server.submitTransaction(signedTx);
+    const txHash = result.hash;
+
+    this.onProtocol('tx', {
+      phase: 'confirmed',
+      tx_hash: txHash,
+      ledger: result.ledger,
+    });
+
+    // 6. Re-request with X-Payment proof
+    const proofPayload = {
+      x402Version: '1',
+      scheme: 'exact',
+      network: 'stellar-testnet',
+      tx_hash: txHash,
+    };
+    const paymentProof = btoa(JSON.stringify(proofPayload));
+
+    this.onProtocol('request', {
+      method: 'GET',
+      url: dataUrl,
+      headers: { 'X-Payment': paymentProof },
+      proofDecoded: proofPayload,
+    });
 
     const secondResponse = await fetch(dataUrl, {
       headers: { 'X-Payment': paymentProof },
@@ -132,11 +155,11 @@ export class DataVendClient {
 
     if (secondResponse.ok) {
       const data = await secondResponse.json();
-      this.onStep(5, '\u2713 Data received!');
+      this.onProtocol('response', { status: 200, statusText: 'OK', body: data });
       return { data, tx_hash: txHash, paid_usdc: maxAmountRequired };
     }
 
     const errorBody = await secondResponse.text();
-    throw new Error(`Payment verified but data request failed: ${secondResponse.status} \u2014 ${errorBody}`);
+    throw new Error(`Payment verified but data request failed: ${secondResponse.status} — ${errorBody}`);
   }
 }

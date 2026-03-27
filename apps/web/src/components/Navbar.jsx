@@ -1,5 +1,6 @@
 import { Link, useLocation } from 'react-router-dom';
 import WalletConnect from './WalletConnect';
+import ThemeToggle from './ThemeToggle';
 
 export default function Navbar() {
   const { pathname } = useLocation();
@@ -7,25 +8,26 @@ export default function Navbar() {
   const linkClass = (path) =>
     `px-3 py-1.5 rounded-lg text-sm font-medium transition-colors ${
       pathname === path
-        ? 'bg-violet-500/20 text-violet-400'
-        : 'text-gray-400 hover:text-gray-200'
+        ? 'bg-wine/15 text-wine-light'
+        : 'text-txt-soft hover:text-txt'
     }`;
 
   return (
-    <nav className="sticky top-0 z-50 border-b border-gray-800 bg-gray-950/80 backdrop-blur-md">
+    <nav className="sticky top-0 z-50 border-b border-line bg-base/80 backdrop-blur-md transition-colors duration-200">
       <div className="mx-auto flex max-w-6xl items-center justify-between px-4 py-3">
-        <Link to="/" className="flex items-center gap-2 text-lg font-bold text-white">
-          <span className="text-2xl">&#x1F52C;</span>
+        <Link to="/" className="flex items-center gap-2 font-heading text-lg font-bold text-txt-strong">
+          <img src="/icon vend.svg" alt="DataVend" className="h-7 w-7" />
           <span>DataVend</span>
         </Link>
 
         <div className="flex items-center gap-2">
           <Link to="/sensors" className={linkClass('/sensors')}>
-            Sensors
+            Sensores
           </Link>
           <Link to="/explorer" className={linkClass('/explorer')}>
             Explorer
           </Link>
+          <ThemeToggle />
           <WalletConnect />
         </div>
       </div>

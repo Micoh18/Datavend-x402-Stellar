@@ -1,0 +1,16 @@
+node_modules
+target
+.git
+contracts
+packages/sensor-node
+packages/buyer-sdk
+docker-compose.yml
+scripts
+*.md
+!README.md
+tasks
+.env
+.env.*
+!.env.example
+coverage
+.docker

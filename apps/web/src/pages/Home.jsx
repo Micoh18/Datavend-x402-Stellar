@@ -1,92 +1,179 @@
 import { Link } from 'react-router-dom';
-
-const STEPS = [
-  { label: 'GET', desc: 'Request data', color: 'text-blue-400 border-blue-500/30 bg-blue-500/10' },
-  { label: '402', desc: 'Payment required', color: 'text-amber-400 border-amber-500/30 bg-amber-500/10' },
-  { label: 'PAY', desc: 'Stellar tx', color: 'text-violet-400 border-violet-500/30 bg-violet-500/10' },
-  { label: 'DATA', desc: 'Receive data', color: 'text-emerald-400 border-emerald-500/30 bg-emerald-500/10' },
-];
+import HeroTerminal from '../components/HeroTerminal';
 
 export default function Home() {
   return (
-    <div className="flex flex-col items-center">
-      {/* Hero */}
-      <section className="flex flex-col items-center px-4 pt-20 pb-16 text-center">
-        <h1 className="mb-4 text-5xl font-bold tracking-tight text-white md:text-6xl">
-          DataVend
-        </h1>
-        <p className="mb-2 text-xl text-violet-400 font-medium">
-          Pay-per-query sensor data marketplace
-        </p>
-        <p className="mb-10 max-w-lg text-gray-400">
-          Buy real-world sensor data with micropayments on Stellar.
-          Temperature, humidity, pH &mdash; one API call, one payment, instant data.
-        </p>
-
-        {/* x402 flow visual */}
-        <div className="mb-10 flex flex-wrap items-center justify-center gap-3">
-          {STEPS.map((step, i) => (
-            <div key={step.label} className="flex items-center gap-3">
-              <div
-                className={`flex flex-col items-center rounded-xl border px-6 py-4 ${step.color}`}
-              >
-                <span className="font-mono text-2xl font-bold">{step.label}</span>
-                <span className="mt-1 text-xs opacity-70">{step.desc}</span>
-              </div>
-              {i < STEPS.length - 1 && (
-                <span className="text-2xl text-gray-600">&#x2192;</span>
-              )}
-            </div>
-          ))}
+    <div className="page-enter">
+      {/* Hero — split layout */}
+      <section className="mx-auto flex max-w-6xl flex-col gap-10 px-4 pt-16 pb-20 lg:flex-row lg:items-center lg:gap-16 lg:pt-24">
+        <div className="flex-1">
+          <h1 className="font-heading text-5xl font-black leading-tight text-txt-strong md:text-6xl">
+            DataVend
+          </h1>
+          <p className="mt-4 max-w-md text-lg leading-relaxed text-txt-soft">
+            Datos de sensores de vi&ntilde;edos mendocinos, por micropago.
+            Protocolo x402 sobre Stellar.
+          </p>
+          <p className="mt-2 text-sm text-txt-muted">
+            Temperatura &middot; Humedad &middot; pH &mdash; un request, un pago, dato instant&aacute;neo.
+          </p>
+          <Link
+            to="/sensors"
+            className="mt-8 inline-block rounded-xl bg-wine px-8 py-3 text-lg font-semibold text-white transition-all hover:bg-wine-light hover:shadow-lg hover:shadow-wine/20"
+          >
+            Compr&aacute; un dato por $0.005 &#x2192;
+          </Link>
+          <p className="mt-3 text-xs text-txt-muted">
+            Testnet &mdash; sin wallet real, pod&eacute;s probar con modo demo.
+          </p>
         </div>
 
-        <Link
-          to="/sensors"
-          className="rounded-xl bg-violet-600 px-8 py-3 text-lg font-semibold text-white transition-all hover:bg-violet-500 hover:shadow-lg hover:shadow-violet-500/20"
-        >
-          Explore Sensors &#x2192;
-        </Link>
+        <div className="flex-1 lg:max-w-xl">
+          <HeroTerminal />
+        </div>
       </section>
 
-      {/* How it works */}
-      <section className="w-full max-w-4xl px-4 pb-20">
-        <h2 className="mb-8 text-center text-2xl font-bold text-white">How x402 works</h2>
-        <div className="grid gap-6 md:grid-cols-2">
-          {[
-            {
-              n: '1',
-              title: 'Discover sensors',
-              desc: 'Browse registered sensors on the Soroban smart contract. Each sensor publishes its price and data endpoint.',
-            },
-            {
-              n: '2',
-              title: 'Request data',
-              desc: 'Send a GET request to the sensor endpoint. If no payment is attached, you receive an HTTP 402 with payment instructions.',
-            },
-            {
-              n: '3',
-              title: 'Pay on Stellar',
-              desc: 'Build and sign a Stellar transaction for the exact USDC amount. Submit it to Stellar Testnet for instant confirmation.',
-            },
-            {
-              n: '4',
-              title: 'Receive data',
-              desc: 'Re-send the request with the X-Payment header containing the tx proof. The sensor verifies and returns the data.',
-            },
-          ].map((item) => (
-            <div
-              key={item.n}
-              className="rounded-xl border border-gray-800 bg-gray-900/50 p-5"
-            >
-              <div className="mb-2 flex items-center gap-3">
-                <span className="flex h-8 w-8 items-center justify-center rounded-full bg-violet-600 text-sm font-bold text-white">
-                  {item.n}
-                </span>
-                <h3 className="font-semibold text-white">{item.title}</h3>
-              </div>
-              <p className="text-sm text-gray-400">{item.desc}</p>
-            </div>
-          ))}
+      {/* Contraste — argumento econ&oacute;mico */}
+      <section className="border-t border-line px-6 py-20">
+        <div className="mx-auto max-w-lg text-center">
+
+          <p className="text-txt-muted text-xs tracking-widest uppercase font-mono mb-4">
+            antes
+          </p>
+          <p className="text-txt-muted text-2xl leading-tight line-through decoration-wine/40">
+            $500 &ndash; $2.000 / mes
+          </p>
+          <p className="text-txt-muted text-sm mt-2">
+            para saber la temperatura de tu vi&ntilde;edo tres veces al d&iacute;a.
+          </p>
+
+          <div className="border-t border-line my-10" />
+
+          <p className="text-wine text-xs tracking-widest uppercase font-mono mb-4">
+            ahora
+          </p>
+          <p className="font-heading text-6xl font-black leading-none text-txt-strong md:text-7xl">
+            $0.005
+          </p>
+          <p className="text-txt-strong text-lg mt-3">
+            por lectura.
+          </p>
+          <p className="text-txt-soft text-sm mt-2">
+            Sin cuenta. Sin contrato. El sensor te cobra directo.
+          </p>
+
+        </div>
+      </section>
+
+      {/* Foto vi&ntilde;edo — contexto emocional */}
+      <section className="relative overflow-hidden">
+        {/* PLACEHOLDER: reemplazar src con foto real de vi&ntilde;edo mendocino */}
+        <div className="h-72 w-full bg-elevated md:h-96">
+          <img
+            src="/img/24980.jpg"
+            alt="Vi&ntilde;edo en Valle de Uco, Mendoza"
+            className="h-full w-full object-cover" style={{ objectPosition: 'center 70%' }}
+            onError={(e) => {
+              e.target.style.display = 'none';
+              e.target.parentElement.classList.add('flex', 'items-center', 'justify-center');
+              e.target.insertAdjacentHTML('afterend',
+                '<span class="text-txt-muted text-sm font-mono">placeholder: foto vi&ntilde;edo mendocino con hileras de vid</span>'
+              );
+            }}
+          />
+        </div>
+        <div className="absolute inset-0 bg-gradient-to-t from-base via-base/40 to-transparent" />
+        <div className="absolute bottom-0 left-0 right-0 px-6 pb-8">
+          <p className="mx-auto max-w-2xl text-center text-sm text-txt-soft">
+            Los vi&ntilde;edos producen datos todo el d&iacute;a.
+            Hasta ahora, acceder a ellos requer&iacute;a un contrato
+            con un proveedor de IoT.
+          </p>
+        </div>
+      </section>
+
+      {/* Sensor en campo — la realidad f&iacute;sica */}
+      <section className="border-t border-line">
+        <div className="mx-auto flex max-w-5xl flex-col gap-8 px-4 py-16 md:flex-row md:items-center md:gap-12">
+          {/* PLACEHOLDER: foto de un sensor/nodo IoT en un vi&ntilde;edo */}
+          <div className="flex-1 overflow-hidden rounded-xl bg-elevated">
+            <img
+              src="/img/Viniot_red-de-sensores-Iot.jpg"
+              alt="Sensor IoT instalado entre hileras de vid"
+              className="h-64 w-full object-cover md:h-80"
+              onError={(e) => {
+                e.target.style.display = 'none';
+                e.target.parentElement.classList.add('flex', 'items-center', 'justify-center', 'h-64', 'md:h-80');
+                e.target.insertAdjacentHTML('afterend',
+                  '<span class="text-txt-muted text-sm font-mono px-4 text-center">placeholder: sensor IoT en vi&ntilde;edo, caja peque&ntilde;a con antena entre plantas</span>'
+                );
+              }}
+            />
+          </div>
+          <div className="flex-1">
+            <p className="text-xs font-mono tracking-widest uppercase text-txt-muted mb-3">
+              El sensor como microservicio
+            </p>
+            <p className="text-txt-soft text-sm leading-relaxed">
+              Cada nodo tiene su propia wallet Stellar y un endpoint HTTP.
+              Cuando alguien quiere un dato, el sensor responde
+              con <code className="rounded bg-elevated px-1.5 py-0.5 font-mono text-xs text-wine">402 Payment Required</code> y
+              el precio. El comprador paga en USDC, el sensor verifica on-chain
+              y entrega el dato. Sin servidores intermedios.
+            </p>
+            <p className="text-txt-muted text-xs mt-4">
+              Protocolo x402 &mdash; el est&aacute;ndar abierto de Coinbase
+              para pagos m&aacute;quina-a-m&aacute;quina.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      {/* Cosecha — el dato tiene valor real */}
+      <section className="border-t border-line">
+        <div className="mx-auto flex max-w-5xl flex-col-reverse gap-8 px-4 py-16 md:flex-row md:items-center md:gap-12">
+          <div className="flex-1">
+            <p className="text-xs font-mono tracking-widest uppercase text-txt-muted mb-3">
+              Datos que mueven decisiones
+            </p>
+            <p className="text-txt-soft text-sm leading-relaxed">
+              Un en&oacute;logo necesita saber si la temperatura baj&oacute;
+              de 5&deg;C anoche para decidir la cosecha. Un agr&oacute;nomo
+              monitorea el pH del suelo para ajustar el riego. Hoy pagan
+              miles de d&oacute;lares por esa informaci&oacute;n. Con DataVend,
+              la consulta cuesta lo que vale: fracciones de centavo.
+            </p>
+          </div>
+          {/* PLACEHOLDER: foto de cosecha / en&oacute;logo en bodega / uvas de cerca */}
+          <div className="flex-1 overflow-hidden rounded-xl bg-elevated">
+            <img
+              src="/img/hands-holding-cutting-grape-from-plant.jpg"
+              alt="Cosecha de uvas en Mendoza"
+              className="h-64 w-full object-cover md:h-80"
+              onError={(e) => {
+                e.target.style.display = 'none';
+                e.target.parentElement.classList.add('flex', 'items-center', 'justify-center', 'h-64', 'md:h-80');
+                e.target.insertAdjacentHTML('afterend',
+                  '<span class="text-txt-muted text-sm font-mono px-4 text-center">placeholder: cosecha de uvas, manos cortando racimos, o en&oacute;logo en bodega</span>'
+                );
+              }}
+            />
+          </div>
+        </div>
+      </section>
+
+      {/* Prueba de vida + CTA final */}
+      <section className="border-t border-line px-6 py-16">
+        <div className="mx-auto max-w-lg text-center">
+          <p className="text-txt-soft text-sm">
+            Tres sensores corriendo en Stellar Testnet ahora mismo.
+          </p>
+          <Link
+            to="/sensors"
+            className="mt-6 inline-block rounded-xl bg-wine px-8 py-3 text-lg font-semibold text-white transition-all hover:bg-wine-light hover:shadow-lg hover:shadow-wine/20"
+          >
+            Prueba la demo &#x2192;
+          </Link>
         </div>
       </section>
     </div>
